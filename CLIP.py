@@ -16,8 +16,11 @@ class CLIP(nn.Module):
         self.W_t = nn.Linear(self.text_encoder_config.n_embd, n_embedding_space)
 
         # Image Encoder
-        self.image_encoder =ViT(image_size=224, patch_size=16, dim=768, depth=12, heads=8, mlp_dim=3072, dropout=0.0, emb_dropout=0.0)
+        self.image_encoder = ViT(image_size=224, patch_size=16, dim=768, depth=12, heads=8, mlp_dim=3072, dropout=0.0, emb_dropout=0.0)
         self.W_i = nn.Linear(self.image_encoder.dim, n_embedding_space)
+
+        # Just for fitting missing keys
+        self.norm = nn.LayerNorm(normalized_shape=n_embedding_space)
 
         self.temperature = temperature
         self.t = nn.Parameter(torch.FloatTensor([self.temperature]))
