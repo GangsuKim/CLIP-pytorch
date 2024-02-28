@@ -14,7 +14,7 @@ def food101(data_path: str):
         temp = file.split('\\')
         data_dict['text'].append(temp[1].replace('_', ' '))
         data_dict['label'].append(labels[temp[1]])
-        data_dict['image_name'].append(temp[2])
+        data_dict['image_name'].append(os.path.join(temp[1], temp[2]))
 
     return pd.DataFrame(data_dict)
 
