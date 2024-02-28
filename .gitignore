@@ -1,5 +1,6 @@
 /RadifordTransformerTorch
 /data
 /weight
+/GPT2
 dataset_test.ipynb
 bakcup.py
