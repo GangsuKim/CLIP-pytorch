@@ -26,6 +26,7 @@ class CLIP(nn.Module):
         # extract feature representations of each modality
         text_inputs = self.bpe(texts, padding=True, return_tensors="pt").to('cuda' if torch.cuda.is_available() else 'cpu')
 
+        # Get [EOS] token's index from text token embeddings
         eos_places = torch.argmin(text_inputs.attention_mask, dim=1)
         eos_places[eos_places == 0] = len(text_inputs.attention_mask[-1])
         eos_places -= 1
