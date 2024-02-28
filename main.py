@@ -1,9 +1,7 @@
 import argparse
 
-import numpy as np
 import pandas as pd
 import torch
-import transformers.modeling_outputs
 from torch import optim
 from torch.utils.data import Dataset, DataLoader
 
@@ -16,6 +14,7 @@ import torch.nn.functional as F
 from tqdm import tqdm
 import os
 from PIL import Image
+
 
 class CLIPDataSet(Dataset):
     def __init__(self, train_data: pd.DataFrame, origin_file_path: str, load_first: bool = True):
