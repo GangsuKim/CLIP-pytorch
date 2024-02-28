@@ -5,100 +5,11 @@ import torch
 from torch import optim
 from torch.utils.data import Dataset, DataLoader
 
-from ViT import ViT
-
-from transformers import GPT2Config, GPT2Tokenizer, GPT2LMHeadModel
-from torchvision.transforms import transforms
 import torch.nn as nn
-import torch.nn.functional as F
 from tqdm import tqdm
-import os
-from PIL import Image
 
-
-class CLIPDataSet(Dataset):
-    def __init__(self, train_data: pd.DataFrame, origin_file_path: str, load_first: bool = True):
-        # Text Encoder
-        self.bpe = GPT2Tokenizer.from_pretrained("openai-community/gpt2")
-        self.bpe.pad_token = self.bpe.eos_token
-
-        self.origin_file_path = origin_file_path
-        self.load_first = load_first
-
-        self.transform = transforms.Compose([
-            transforms.Resize((224, 224)),
-            transforms.ToTensor(),
-            transforms.Normalize(mean=[0.4441, 0.4212, 0.3847], std=[0.2613, 0.2547, 0.2656])
-        ])
-
-        # Initial tokenizing
-        self.image_data = []
-        self.text_data = []
-
-        for d in tqdm(train_data.iloc, total=len(train_data)):
-            if self.load_first:
-                image_ = self.transform(Image.open(os.path.join(self.origin_file_path, d.image_name)))
-                self.image_data.append(image_)
-            else:
-                self.image_data.append(os.path.join(self.origin_file_path, d.image_name))
-
-            text_ = self.bpe.bos_token + d.comment + self.bpe.eos_token
-            self.text_data.append(text_)
-
-        assert len(self.image_data) == len(self.text_data)
-
-    def n_vocab(self) -> int:
-        return self.bpe.vocab_size
-
-    def __getitem__(self, i):
-        if self.load_first:
-            image_ = self.image_data[i]
-        else:
-            image_ = self.transform(Image.open(os.path.join(self.image_data[i])))
-
-        text_ = self.text_data[i]
-        return image_, text_
-
-    def __len__(self):
-        return len(self.image_data)
-
-
-class CLIP(nn.Module):
-    def __init__(self, tokenizer: GPT2Tokenizer, n_embedding_space: int = 512, temperature: float = 0.07, n_vocab: int = 50257):
-        super(CLIP, self).__init__()
-
-        # Text Encoder
-        self.bpe = tokenizer
-        self.text_encoder_config = GPT2Config(vocab_size=n_vocab, n_positions=76, n_embd=512, n_layer=12, n_head=8, output_hidden_states=True)
-        self.text_encoder = GPT2LMHeadModel(self.text_encoder_config)
-        self.W_t = nn.Linear(self.text_encoder_config.n_embd, n_embedding_space)
-
-        # Image Encoder
-        self.image_encoder =ViT(image_size=224, patch_size=16, dim=768, depth=12, heads=8, mlp_dim=3072, dropout=0.0, emb_dropout=0.0)
-        self.W_i = nn.Linear(self.image_encoder.dim, n_embedding_space)
-
-        self.temperature = temperature
-        self.t = nn.Parameter(torch.FloatTensor([self.temperature]))
-
-    def forward(self, image, texts):
-        # extract feature representations of each modality
-        text_inputs = self.bpe(texts, padding=True, return_tensors="pt").to('cuda' if torch.cuda.is_available() else 'cpu')
-
-        eos_places = torch.argmin(text_inputs.attention_mask, dim=1)
-        eos_places[eos_places == 0] = len(text_inputs.attention_mask[-1])
-        eos_places -= 1
-
-        h = self.text_encoder(**text_inputs).hidden_states[-1]
-        T_f = h[torch.arange(h.size(0)), eos_places, :]
-        I_f = self.image_encoder(image)
-
-        # joint multimodal embedding
-        T_e = F.normalize(self.W_t(T_f), dim=1)
-        I_e = F.normalize(self.W_i(I_f), dim=1)
-
-        # scaled pairwise cosine similarities [n, n]
-        logit = torch.matmul(I_e, T_e.T) * torch.exp(self.t)
-        return logit
+from CLIP import CLIP
+from CLIPDataSet import CLIPDataSet
 
 
 if __name__ == '__main__':
