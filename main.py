@@ -100,16 +100,6 @@ class CLIP(nn.Module):
         logit = torch.matmul(I_e, T_e.T) * torch.exp(self.t)
         return logit
 
-    def set_mode(self, mode):
-        if mode == 'train':
-            self.text_encoder.train()
-            self.image_encoder.train()
-        elif mode == 'train':
-            self.text_encoder.eval()
-            self.image_encoder.eval()
-        else:
-            raise Exception(f'Train mode {mode} is not available')
-
 
 if __name__ == '__main__':
     # ================ [ArgumentParser] ================
@@ -151,7 +141,6 @@ if __name__ == '__main__':
 
     for e in range(args.epoch_from, n_epochs):
         model.train()
-        model.set_mode('train')
 
         train_tq = tqdm(train_loader)
 
