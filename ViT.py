@@ -89,7 +89,7 @@ class Transformer(nn.Module):
 
 
 class ViT(nn.Module):
-    def __init__(self, *, image_size, patch_size, dim, depth, heads, mlp_dim, pool = 'cls', channels = 3, dim_head = 64, dropout = 0., emb_dropout = 0, num_classes=1000):
+    def __init__(self, *, image_size, patch_size, dim, depth, heads, mlp_dim, pool = 'cls', channels = 3, dim_head = 64, dropout = 0., emb_dropout = 0.):
         super().__init__()
         image_height, image_width = pair(image_size)
         patch_height, patch_width = pair(patch_size)
@@ -108,11 +108,13 @@ class ViT(nn.Module):
             nn.LayerNorm(dim),
         )
 
+        self.patch_embedding_norm = nn.LayerNorm(dim)  # Additional Layer Normalization From CLIP Paper
+
         self.pos_embedding = nn.Parameter(torch.randn(1, num_patches + 1, dim))
         self.cls_token = nn.Parameter(torch.randn(1, 1, dim))
         self.dropout = nn.Dropout(emb_dropout)
 
-        self.layer_norm = nn.LayerNorm(dim)  # Additional Layer Normalization From CLIP Paper
+        self.pos_embedding_norm = nn.LayerNorm(dim)  # Additional Layer Normalization From CLIP Paper
 
         self.transformer = Transformer(dim, depth, heads, dim_head, mlp_dim, dropout)
 
@@ -123,12 +125,12 @@ class ViT(nn.Module):
 
     def forward(self, img):
         x = self.to_patch_embedding(img)
-        x = self.layer_norm(x)  # Additional Layer Normalization From CLIP Paper
+        x = self.patch_embedding_norm(x)  # Additional Layer Normalization From CLIP Paper
         b, n, _ = x.shape
 
         cls_tokens = repeat(self.cls_token, '1 1 d -> b 1 d', b = b)
         x = torch.cat((cls_tokens, x), dim=1)
-        x += self.layer_norm(self.pos_embedding[:, :(n + 1)])  # Additional Layer Normalization From CLIP Paper
+        x += self.pos_embedding_norm(self.pos_embedding[:, :(n + 1)])  # Additional Layer Normalization From CLIP Paper
         x = self.dropout(x)
 
         x = self.transformer(x)
