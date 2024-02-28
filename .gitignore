@@ -1,4 +1,5 @@
-RadifordTransformerTorch
-data
+/RadifordTransformerTorch
+/data
+/weight
 dataset_test.ipynb
 bakcup.py
