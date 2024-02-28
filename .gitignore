@@ -2,5 +2,7 @@
 /data
 /weight
 /GPT2
+/.idea
+/__pycache__
 dataset_test.ipynb
 bakcup.py
