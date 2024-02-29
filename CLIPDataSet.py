@@ -98,7 +98,8 @@ class CLIPZeroShotDataSet(Dataset):
         if self.load_first:
             image_ = self.image_data[i]
         else:
-            image_ = self.transform(Image.open(os.path.join(self.image_data[i])))
+            im = Image.open(os.path.join(self.image_data[i]))
+            image_ = self.transform(im.convert(mode='RGB'))
 
         label_ = self.label[i]
 
