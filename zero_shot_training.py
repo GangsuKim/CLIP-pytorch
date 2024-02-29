@@ -79,7 +79,7 @@ def main():
             T_f = h[torch.arange(h.size(0)), eos_places, :]
 
             logit = model.W_t(T_f)
-            loss = criterion(F.softmax(logit, dim=1), labels)
+            loss = criterion(logit, labels)
             train_acc[e] += torch.sum(F.softmax(logit, dim=1).argmax(1) == labels).item()
 
             loss.backward()
