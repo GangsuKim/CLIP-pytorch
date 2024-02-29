@@ -17,16 +17,16 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--batch_size', type=int, default=32)
     parser.add_argument('--load_first', action='store_true', help="if true, images are loaded to memory at loder")  # Inference data type
-    parser.add_argument('--data_path', default='D:/AnacondaDrive/CLIP/data/archive/images/', type=str)
+    parser.add_argument('--data_path', default='./data/CIFAR-10/test/', type=str)
     parser.add_argument('--n_classes', type=int, default=101, help="Number of the classification classes")
 
     # ================ [Train Settings] ================
     args, unknown = parser.parse_known_args()
     print(args)
 
-    train_df = pd.read_csv('./DATA/food101.csv', encoding='utf-8')
+    train_df = pd.read_csv('./DATA/CIFAR-10.csv', encoding='utf-8')
 
-    train_dataset = CLIPZeroShotDataSet(train_df, origin_file_path=args.data_path, load_first=args.load_first, prefix_phrase='A photo of a *.')
+    train_dataset = CLIPZeroShotDataSet(train_df, origin_file_path=args.data_path, load_first=args.load_first, prefix_phrase='a photo of *, a type of food.')
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, num_workers=0, shuffle=True)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -35,7 +35,7 @@ def main():
     model = CLIP(tokenizer=train_dataset.bpe, n_embedding_space=512, n_vocab=train_dataset.n_vocab())
 
     # Load Self-supervised pretrained model
-    model.load_state_dict(torch.load('./weight/CLIP_E10.pth'))
+    model.load_state_dict(torch.load('./weight/CLIP_E211.pth'))
 
     model.to(device)
 
