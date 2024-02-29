@@ -62,14 +62,13 @@ if __name__ == '__main__':
 
             images = images.to(device)
 
-            logits = model(images, label)
+            logits = model(images, label)  # logits = np.dot(I_e, T_e.T) * np.exp(t)
 
-            matrix_labels = torch.eye(images.size(0)).to(device)
-
-            loss_i = criterion(logits, matrix_labels)
-            loss_t = criterion(logits.T, matrix_labels)
-
-            loss = (loss_i + loss_t) / 2
+            # symmetric loss function
+            matrix_labels = torch.eye(images.size(0)).to(device)  # labels = np.arange(e)
+            loss_i = criterion(logits, matrix_labels)  # loss_i = cross_entropy_loss(logits, labels, axis=0)
+            loss_t = criterion(logits.T, matrix_labels)  # loss_t = cross_entropy_loss(logits, labels, axis=1)
+            loss = (loss_i + loss_t) / 2  # loss = (loss_i + loss_t) / 2
 
             loss.backward()
             optimizer.step()
