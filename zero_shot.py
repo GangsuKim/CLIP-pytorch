@@ -16,15 +16,11 @@ def main():
     # ================ [ArgumentParser] ================
     parser = argparse.ArgumentParser()
     parser.add_argument('--batch_size', type=int, default=32)
-    parser.add_argument('--checkpoint', default=None, help="Model checkpoint path")
-
     parser.add_argument('--load_first', action='store_true', help="if true, images are loaded to memory at loder")  # Inference data type
     parser.add_argument('--data_path', default='D:/AnacondaDrive/CLIP/data/archive/images/', type=str)
-    parser.add_argument('--epoch_from', type=int, default=0, help="Last epoch of model")
     parser.add_argument('--n_classes', type=int, default=101, help="Number of the classification classes")
 
     # ================ [Train Settings] ================
-    parser.add_argument('--lr', default=0.0005, type=float, help="model learning rate")
     args, unknown = parser.parse_known_args()
     print(args)
 
