@@ -4,6 +4,6 @@
 /GPT2
 /.idea
 /__pycache__
-.ipynb
+*.ipynb
 dataset_test.ipynb
 bakcup.py
