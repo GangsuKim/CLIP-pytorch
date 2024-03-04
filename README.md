@@ -33,3 +33,7 @@ Source : [OpenAI/CLIP](https://github.com/openai/CLIP)
 |----------|:-------------:|:-----------------------:|
 | Food101  | 1.1%      |          1.1%           |
 | CIFAR-10 | 12.2%     |          16.8%          |
+
+## License
+[ViT](https://github.com/lucidrains/vit-pytorch/blob/main/vit_pytorch/vit.py) : From [lucidrains GitHub](https://github.com/lucidrains/vit-pytorch/tree/main) repository  
+[GPT-2](https://huggingface.co/docs/transformers/model_doc/gpt2) : Using OpenAI GPT-2 from [transformers](https://github.com/huggingface/transformers) library
