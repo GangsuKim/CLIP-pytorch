@@ -20,5 +20,5 @@ def food101(data_path: str):
 
 
 if __name__ == '__main__':
-    df = food101(data_path='D:/AnacondaDrive/CLIP/data/archive/images/')
-    df.to_csv('D:/AnacondaDrive/CLIP/data/archive/food101.csv', encoding='utf-8', index_label=0)
+    df = food101(data_path='PATH_TO_DATA')
+    df.to_csv('PATH_TO_SAVE', encoding='utf-8', index_label=0)
