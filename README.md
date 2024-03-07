@@ -1,6 +1,6 @@
 # CLIP PyTorch Implementation
 Implementation of [Learning Transferable Visual Models From Natural Language Supervision](https://cdn.openai.com/papers/Learning_Transferable_Visual_Models_From_Natural_Language_Supervision.pdf)  
-[[Paper]](https://arxiv.org/abs/2103.00020) [[Official Code]](https://github.com/openai/CLIP)
+[[Paper]](https://arxiv.org/abs/2103.00020) [[Official Code]](https://github.com/openai/CLIP) [[Korean Report]](https://gangsu.kim/viewer/web/viewer.html?file=https://gangsu.kim/pdf/CLIP_report.pdf)  
 
 ## Architecture of CLIP
 ![CLIP](CLIP.png)  
